@@ -1,11 +1,17 @@
 package com.gt.utils;
 
-import com.gt.helpers.TimeSlots;
-
 import java.util.List;
 
-public class Room {
+abstract public class Room {
     TimeSlots ts = new TimeSlots();
+
+    public abstract Integer getCapacity();
+
+    public abstract String getName();
+
+    public abstract void setCapacity(Integer capacity);
+
+    public abstract void setName(String name);
 
     public void bookRoom(Integer slot, Integer nos) {
         for (int i = slot; i < slot + nos; i++) {

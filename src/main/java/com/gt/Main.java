@@ -24,6 +24,7 @@ public class Main {
         Map<String, Room> rooms=createRoom();
         Scanner sc = new Scanner(System.in);
 
+
         for (prompt(); sc.hasNextLine(); prompt()) {
             String line = sc.nextLine().replaceAll("\n", "");
 

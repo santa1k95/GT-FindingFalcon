@@ -1,4 +1,6 @@
-package com.gt.helpers;
+package com.gt.utils;
+
+import com.gt.helpers.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +9,9 @@ import java.util.List;
 
 public class TimeSlots {
     List<Boolean> slots=new ArrayList<>(Arrays.asList(new Boolean[Constants.SLOTS_HOUR * Constants.HOURS] ));
+
+
+
     public TimeSlots(){
         Collections.fill(slots, Boolean.FALSE);
     }
