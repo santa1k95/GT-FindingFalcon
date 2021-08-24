@@ -23,8 +23,10 @@ public class RoomServiceImplTest {
             System.out.println(room.getCapacity());
             System.out.println(room.getTimeSlots().toString());
             room.bookRoom(0,4);
+            assertNotNull(room);
         });
         assertNotNull(rooms);
+
         assertTrue(roomService.createLocalTime("10:00") instanceof LocalTime);
         assertTrue(!(roomService.createLocalTime("100:00") instanceof LocalTime));
     }
