@@ -1,7 +1,7 @@
 package com.gt.services;
 
 import com.gt.helpers.Constants;
-import com.gt.helpers.Validator;
+import static com.gt.helpers.Validator.isValidTime;
 import com.gt.utils.CCave;
 import com.gt.utils.DTower;
 import com.gt.utils.GMansion;
@@ -9,8 +9,13 @@ import com.gt.utils.Room;
 
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.gt.InitHelper.createLocalTime;
+import static com.gt.InitHelper.getSlotDetails;
 
 public class RoomServiceImpl implements RoomService {
     private static RoomServiceImpl instance = null;
@@ -77,15 +82,15 @@ public class RoomServiceImpl implements RoomService {
         return instance;
     }
 
+    @Override
     public void bookSlotFromCommand(String[] args) {
-        if(args.length<3){
+        if(args.length<4){
             System.out.println("Arguments Provided not in Sync. Please provide in the format \nBOOK <start_time(inclusive)> <end_time(exclusive)> <person_capacity>");
             return;
         }
-        String startTimeStr=args[0];
-        String endTimeStr=args[1];
-        String noOfPersons= args[2];
-
+        String startTimeStr=args[1];
+        String endTimeStr=args[2];
+        String noOfPersons= args[3];
         LocalTime startTime= null,endTime= null;
         Map<String,Integer> slotData=null;
         try {
@@ -94,14 +99,16 @@ public class RoomServiceImpl implements RoomService {
             slotData= getSlotDetails(startTime,endTime);
         } catch (Exception e) {
             System.out.println("Exception: "+e.toString());
+            return;
         }
 
-        if(!Validator.validateTime(startTime,endTime)){
-            System.out.println("INCORRECT_INPUT");
-        }
-
+//                    List<Room> freeRoomsToBook=checkIfFree(rooms,slotData);
+//                    freeRoomsToBook.stream().anyMatch(it-> it.getClass().getSimpleName()=="CCave");
         if (Integer.valueOf(noOfPersons) < 4){
             rooms.get(Constants.C_CAVE_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
+            rooms.get(Constants.C_CAVE_NAME).printSlotsInRoom();
+            rooms.get(Constants.D_TOWER_NAME).printSlotsInRoom();
+            rooms.get(Constants.G_MANSION_NAME).printSlotsInRoom();
         }
         else if (Integer.valueOf(noOfPersons) < 8){
             rooms.get(Constants.D_TOWER_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
@@ -110,6 +117,50 @@ public class RoomServiceImpl implements RoomService {
         }else {
             System.out.println("NO_VACANT_ROOM");
         }
+    }
+
+    @Override
+    public boolean showVacantRooms(String []args){
+        if(args.length<3){
+            System.out.println("Arguments Provided not in Sync. Please provide in the format \nBOOK <start_time(inclusive)> <end_time(exclusive)> <person_capacity>");
+            return false;
+        }
+        String startTimeStr=args[1];
+        String endTimeStr=args[2];
+        Map<String,Integer> slotData=null;
+        LocalTime startTime= null,endTime= null;
+        try {
+            startTime = createLocalTime(startTimeStr);
+            endTime = createLocalTime(endTimeStr);
+            slotData= getSlotDetails(startTime,endTime);
+        } catch (Exception e) {
+            System.out.println("Exception: "+e.toString());
+            return false;
+        }
+        if(!isValidTime(startTime,endTime)){
+            return false;
+        }
+        List<Room> freeRooms=checkIfFree(rooms,slotData);
+        freeRooms.forEach(room -> System.out.println(room.getClass().getSimpleName()));
+        return true;
+    }
+
+    private List<Room> checkIfFree(Map<String, Room> rooms, Map<String, Integer> slotData) {
+        List<Room> roomsFree=new ArrayList<>();
+        rooms.forEach((key,room)->{
+            System.out.println("Checking "+key);
+            int i;
+            for(i=slotData.get("slot");i<slotData.get("slot")+slotData.get("nos");i++){
+                if(room.getTimeSlots().get(i) == true){
+
+                    break;
+                };
+            }
+            if(i==slotData.get("slot")+slotData.get("nos")){
+                roomsFree.add(room);
+            }
+        });
+        return  roomsFree;
     }
 
     public void bookDefaultSlots(String[] args) {

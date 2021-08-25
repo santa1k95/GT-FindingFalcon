@@ -7,10 +7,11 @@ import java.util.Map;
 
 public interface RoomService {
     void createRooms();
+    void resetRooms();
     public Map<String, Room> getRooms();
     public void setRooms(Map<String, Room> rooms);
     Map<String,Integer> getSlotDetails(LocalTime startTime, LocalTime endTime);
     LocalTime createLocalTime(String timeStr) throws Exception;
-    void resetRooms();
-
+    public void bookSlotFromCommand(String[] args);
+    public boolean showVacantRooms(String []args);
 }
