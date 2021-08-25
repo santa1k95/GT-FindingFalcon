@@ -14,14 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.gt.InitHelper.createLocalTime;
-import static com.gt.InitHelper.getSlotDetails;
-
 public class RoomServiceImpl implements RoomService {
     private static RoomServiceImpl instance = null;
 
     private RoomServiceImpl(){
         createRooms();
+        bookDefaultSlots();
     }
 
     private Map<String, Room> rooms= new HashMap<>();
@@ -72,7 +70,11 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public void resetRooms() {
-        instance=new RoomServiceImpl();
+        Map<String, Room> rooms=instance.rooms;
+        rooms.forEach((key,room)->{
+            room.getTs().resetSlots();
+        });
+        bookDefaultSlots();
     }
 
     public static RoomServiceImpl getInstance() {
@@ -101,20 +103,45 @@ public class RoomServiceImpl implements RoomService {
             System.out.println("Exception: "+e.toString());
             return;
         }
-
-//                    List<Room> freeRoomsToBook=checkIfFree(rooms,slotData);
-//                    freeRoomsToBook.stream().anyMatch(it-> it.getClass().getSimpleName()=="CCave");
-        if (Integer.valueOf(noOfPersons) < 4){
-            rooms.get(Constants.C_CAVE_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
-            rooms.get(Constants.C_CAVE_NAME).printSlotsInRoom();
-            rooms.get(Constants.D_TOWER_NAME).printSlotsInRoom();
-            rooms.get(Constants.G_MANSION_NAME).printSlotsInRoom();
+        if(!isValidTime(startTime,endTime)){
+            System.out.println("INCORRECT_INPUT");
+            return;
         }
-        else if (Integer.valueOf(noOfPersons) < 8){
-            rooms.get(Constants.D_TOWER_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
-        }else if (Integer.valueOf(noOfPersons) < 21){
-            rooms.get(Constants.G_MANSION_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
-        }else {
+        boolean roomBooked=false;
+        if (Integer.valueOf(noOfPersons) < 4){
+            boolean booked=rooms.get(Constants.C_CAVE_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
+            roomBooked=booked;
+            if(!booked){
+//                System.out.println("NO_VACANT_ROOM");
+            }else {
+                System.out.println(rooms.get(Constants.C_CAVE_NAME).getName());
+            }
+//            rooms.get(Constants.C_CAVE_NAME).printSlotsInRoom();
+//            rooms.get(Constants.D_TOWER_NAME).printSlotsInRoom();
+//            rooms.get(Constants.G_MANSION_NAME).printSlotsInRoom();
+        }
+        if (!roomBooked && Integer.valueOf(noOfPersons) < 8){
+            boolean booked=rooms.get(Constants.D_TOWER_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
+            roomBooked=booked;
+            if(!booked){
+//                System.out.println("NO_VACANT_ROOM");
+            }else {
+                System.out.println(rooms.get(Constants.D_TOWER_NAME).getName());
+            }
+        } if (!roomBooked && Integer.valueOf(noOfPersons) < 21){
+            boolean booked=rooms.get(Constants.G_MANSION_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
+            roomBooked=booked;
+            if(!booked){
+//                System.out.println("NO_VACANT_ROOM");
+            }else {
+                System.out.println(rooms.get(Constants.G_MANSION_NAME).getName());
+            }
+        }
+//        rooms.get(Constants.C_CAVE_NAME).printSlotsInRoom();
+//        rooms.get(Constants.D_TOWER_NAME).printSlotsInRoom();
+//        rooms.get(Constants.G_MANSION_NAME).printSlotsInRoom();
+        if(!roomBooked)
+        {
             System.out.println("NO_VACANT_ROOM");
         }
     }
@@ -141,14 +168,27 @@ public class RoomServiceImpl implements RoomService {
             return false;
         }
         List<Room> freeRooms=checkIfFree(rooms,slotData);
-        freeRooms.forEach(room -> System.out.println(room.getClass().getSimpleName()));
+        if(freeRooms.size()==0){
+            System.out.print("NO_VACANT_ROOM");
+        }
+        freeRooms.forEach(room -> {
+            System.out.print(room.getName());
+            System.out.print(" ");
+        });
+        System.out.println();
         return true;
     }
 
+    /**
+     * This function checks whether slots are free for the given time slots
+     * @param rooms
+     * @param slotData
+     * @return Returns List of Rooms which are free for the given time slot
+     */
     private List<Room> checkIfFree(Map<String, Room> rooms, Map<String, Integer> slotData) {
         List<Room> roomsFree=new ArrayList<>();
         rooms.forEach((key,room)->{
-            System.out.println("Checking "+key);
+//            System.out.println("Checking "+key);
             int i;
             for(i=slotData.get("slot");i<slotData.get("slot")+slotData.get("nos");i++){
                 if(room.getTimeSlots().get(i) == true){
@@ -163,7 +203,22 @@ public class RoomServiceImpl implements RoomService {
         return  roomsFree;
     }
 
-    public void bookDefaultSlots(String[] args) {
-
+    /**
+     * This function books the buffered slots for all the rooms.
+     */
+    public void bookDefaultSlots() {
+        List<Map<String,Integer>> bookedSlots=new ArrayList<>();
+        bookedSlots.add(getSlotDetails(LocalTime.parse("09:00"),LocalTime.parse("09:15")));
+        bookedSlots.add(getSlotDetails(LocalTime.parse("13:15"),LocalTime.parse("13:45")));
+        bookedSlots.add(getSlotDetails(LocalTime.parse("18:45"),LocalTime.parse("19:00")));
+        for(int i=0;i<bookedSlots.size();i++){
+            Map<String,Integer> it=bookedSlots.get(i);
+            rooms.get(Constants.C_CAVE_NAME).bookRoom(it.get("slot"),it.get("nos"));
+            rooms.get(Constants.D_TOWER_NAME).bookRoom(it.get("slot"),it.get("nos"));
+            rooms.get(Constants.G_MANSION_NAME).bookRoom(it.get("slot"),it.get("nos"));
+        };
+//        rooms.get(Constants.C_CAVE_NAME).printSlotsInRoom();
+//        rooms.get(Constants.D_TOWER_NAME).printSlotsInRoom();
+//        rooms.get(Constants.G_MANSION_NAME).printSlotsInRoom();
     }
 }

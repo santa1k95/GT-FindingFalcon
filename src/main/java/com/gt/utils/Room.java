@@ -13,10 +13,17 @@ abstract public class Room {
 
     public abstract void setName(String name);
 
-    public void bookRoom(Integer slot, Integer nos) {
-        for (int i = slot; i < slot + nos; i++) {
+    public boolean bookRoom(Integer slot, Integer nos) {
+        int i;
+        for (i = slot; i < slot + nos; i++) {
+            if(!this.ts.getSlots().get(i))
             this.ts.bookSlot(i);
+            else break;
         }
+        if (i!=slot+nos){
+            return false;
+        }
+        return true;
     }
 
     public List<Boolean> getTimeSlots() {

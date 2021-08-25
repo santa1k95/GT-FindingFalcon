@@ -16,6 +16,9 @@ public class TimeSlots {
         Collections.fill(slots, Boolean.FALSE);
     }
 
+    public void resetSlots(){
+        Collections.fill(slots, Boolean.FALSE);
+    }
     public List<Boolean> getSlots() {
         return slots;
     }

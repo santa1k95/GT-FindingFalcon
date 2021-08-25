@@ -11,7 +11,7 @@ public class Validator {
         if(startTime.isAfter(endTime)){
             return false;
         }
-        if(startTime.isAfter(LocalTime.parse("24:00")) || endTime.isAfter(LocalTime.parse("24:00"))){
+        if(startTime.isAfter(LocalTime.parse("23:45")) || endTime.isAfter(LocalTime.parse("23:45"))){
             return false;
         }
         return true;
