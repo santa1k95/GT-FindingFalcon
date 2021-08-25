@@ -17,21 +17,38 @@ import java.util.Map;
 public class RoomServiceImpl implements RoomService {
     private static RoomServiceImpl instance = null;
 
+    /**
+     * Private Constructor for singleton
+     */
     private RoomServiceImpl(){
         createRooms();
         bookDefaultSlots();
     }
 
+    /**
+     * Map storing all three types of rooms
+     */
     private Map<String, Room> rooms= new HashMap<>();
 
+    /**
+     * Getter for rooms
+     * @return rooms
+     */
     public Map<String, Room> getRooms() {
         return rooms;
     }
 
+    /**
+     * Setter for rooms
+     * @param rooms
+     */
     public void setRooms(Map<String, Room> rooms) {
         this.rooms = rooms;
     }
 
+    /**
+     * Initialize rooms on instance creation
+     */
     @Override
     public void createRooms() {
         CCave cCave=new CCave();
@@ -43,6 +60,12 @@ public class RoomServiceImpl implements RoomService {
         rooms.put(gMansion.getName(),gMansion);
     }
 
+    /**
+     * Getter for slot details for given time interval
+     * @param startTime
+     * @param endTime
+     * @return Map with initial slot("slot") and number of slot("nos")
+     */
     @Override
     public Map<String, Integer> getSlotDetails(LocalTime startTime, LocalTime endTime) {
         Map <String,Integer> slotData=new HashMap<>();
@@ -51,6 +74,12 @@ public class RoomServiceImpl implements RoomService {
         return slotData;
     }
 
+    /**
+     * Creation of Local Time parsed from string
+     * @param timeStr
+     * @return
+     * @throws Exception Un parsable string
+     */
     @Override
     public LocalTime createLocalTime(String timeStr) throws Exception {
         LocalTime lt = null;
@@ -68,6 +97,9 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    /**
+     * Reset rooms for the instance to default
+     */
     @Override
     public void resetRooms() {
         Map<String, Room> rooms=instance.rooms;
@@ -77,6 +109,10 @@ public class RoomServiceImpl implements RoomService {
         bookDefaultSlots();
     }
 
+    /**
+     * Get instance for singleton class RoomService
+     * @return RoomService
+     */
     public static RoomServiceImpl getInstance() {
         if(instance==null){
             instance=new RoomServiceImpl();
@@ -84,6 +120,10 @@ public class RoomServiceImpl implements RoomService {
         return instance;
     }
 
+    /**
+     * Book slots in relevant room for a given command
+     * @param args Command split to string array
+     */
     @Override
     public void bookSlotFromCommand(String[] args) {
         if(args.length<4){
@@ -146,6 +186,11 @@ public class RoomServiceImpl implements RoomService {
         }
     }
 
+    /**
+     * Show vacant rooms for a given VACANCY command
+     * @param args Command split to string array
+     * @return True if vacant rooms are available false otherwise
+     */
     @Override
     public boolean showVacantRooms(String []args){
         if(args.length<3){

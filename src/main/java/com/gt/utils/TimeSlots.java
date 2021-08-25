@@ -31,4 +31,12 @@ public class TimeSlots {
             System.out.println("NO_VACANT_ROOM");
         }
     }
+    public void clearSlot(Integer slot){
+        if(slot<slots.size()){
+            slots.set(slot,false);
+        }
+        else {
+            System.out.println("NO_VACANT_ROOM");
+        }
+    }
 }
