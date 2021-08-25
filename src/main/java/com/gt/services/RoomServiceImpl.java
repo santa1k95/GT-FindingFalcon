@@ -108,7 +108,7 @@ public class RoomServiceImpl implements RoomService {
             return;
         }
         boolean roomBooked=false;
-        if (Integer.valueOf(noOfPersons) < 4){
+        if (Integer.valueOf(noOfPersons) < rooms.get(Constants.C_CAVE_NAME).getCapacity()){
             boolean booked=rooms.get(Constants.C_CAVE_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
             roomBooked=booked;
             if(!booked){
@@ -120,7 +120,7 @@ public class RoomServiceImpl implements RoomService {
 //            rooms.get(Constants.D_TOWER_NAME).printSlotsInRoom();
 //            rooms.get(Constants.G_MANSION_NAME).printSlotsInRoom();
         }
-        if (!roomBooked && Integer.valueOf(noOfPersons) < 8){
+        if (!roomBooked && Integer.valueOf(noOfPersons) < rooms.get(Constants.D_TOWER_NAME).getCapacity()){
             boolean booked=rooms.get(Constants.D_TOWER_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
             roomBooked=booked;
             if(!booked){
@@ -128,7 +128,7 @@ public class RoomServiceImpl implements RoomService {
             }else {
                 System.out.println(rooms.get(Constants.D_TOWER_NAME).getName());
             }
-        } if (!roomBooked && Integer.valueOf(noOfPersons) < 21){
+        } if (!roomBooked && Integer.valueOf(noOfPersons) < rooms.get(Constants.G_MANSION_NAME).getCapacity()){
             boolean booked=rooms.get(Constants.G_MANSION_NAME).bookRoom(slotData.get("slot"),slotData.get("nos"));
             roomBooked=booked;
             if(!booked){
