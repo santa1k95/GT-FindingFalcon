@@ -1,30 +1,20 @@
 package com.gt;
 
+
 import com.gt.helpers.Constants;
 import com.gt.utils.CCave;
 import com.gt.utils.DTower;
 import com.gt.utils.GMansion;
 import com.gt.utils.Room;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InitHelperTest {
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void createLocalTime() {
